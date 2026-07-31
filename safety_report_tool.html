@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقرير مخالفات السلامة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#161615;
+    --panel:#1f1e1c;
+    --panel-2:#252420;
+    --hazard:#F4B400;
+    --hazard-deep:#C98A00;
+    --alert:#E14B3C;
+    --steel:#8E8B82;
+    --paper:#F2EEE4;
+    --line:#3a3934;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Tajawal',sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* ---- hazard header ---- */
+  .hazard-band{
+    height:14px;
+    background:repeating-linear-gradient(135deg,var(--hazard) 0 22px, var(--ink) 22px 44px);
+  }
+  header{
+    padding:28px 20px 22px;
+    background:var(--panel);
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    color:var(--hazard);
+    text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  h1{
+    margin:0;
+    font-size:26px;
+    font-weight:900;
+    line-height:1.25;
+  }
+  .sub{
+    color:var(--steel);
+    font-size:14px;
+    margin-top:8px;
+  }
+
+  main{
+    max-width:560px;
+    margin:0 auto;
+    padding:22px 16px;
+  }
+
+  .step{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 16px;
+    margin-bottom:16px;
+    position:relative;
+  }
+  .step-num{
+    position:absolute;
+    top:-11px;
+    right:16px;
+    background:var(--hazard);
+    color:var(--ink);
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:12px;
+    padding:3px 10px;
+    border-radius:20px;
+  }
+  .step-title{
+    font-weight:700;
+    font-size:16px;
+    margin:4px 0 14px;
+  }
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  label{
+    display:block;
+    font-size:12px;
+    color:var(--steel);
+    margin-bottom:5px;
+  }
+  input[type=text], input[type=tel], textarea{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--paper);
+    border-radius:8px;
+    padding:11px 12px;
+    font-family:'Tajawal',sans-serif;
+    font-size:15px;
+  }
+  input:focus, textarea:focus, button:focus-visible{
+    outline:2px solid var(--hazard);
+    outline-offset:1px;
+  }
+  textarea{resize:vertical;min-height:100px;line-height:1.6;}
+
+  .upload-zone{
+    border:2px dashed var(--hazard-deep);
+    border-radius:10px;
+    padding:20px;
+    text-align:center;
+    cursor:pointer;
+    background:var(--panel-2);
+    transition:border-color .15s;
+  }
+  .upload-zone:hover{border-color:var(--hazard);}
+  .upload-zone.has-img{padding:0;overflow:hidden;border-style:solid;}
+  .upload-zone img{width:100%;display:block;max-height:280px;object-fit:cover;}
+  .upload-hint{color:var(--steel);font-size:13px;margin-top:6px;}
+  input[type=file]{display:none;}
+
+  button{
+    font-family:'Tajawal',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    border:none;
+    border-radius:9px;
+    padding:12px 16px;
+    cursor:pointer;
+    transition:transform .1s, opacity .15s;
+  }
+  button:active{transform:scale(.98);}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-primary{background:var(--hazard);color:var(--ink);width:100%;}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--paper);width:100%;margin-top:8px;}
+  .btn-whatsapp{background:#25D366;color:#06210f;width:100%;font-size:16px;padding:14px;}
+
+  .ai-box{
+    margin-top:12px;
+    border-right:3px solid var(--hazard);
+    background:var(--panel-2);
+    padding:10px 12px;
+    border-radius:6px;
+    font-size:13px;
+    color:var(--steel);
+    display:none;
+  }
+  .ai-box.show{display:block;}
+  .ai-box .ttl{color:var(--hazard);font-weight:700;font-size:12px;margin-bottom:4px;}
+  .ai-item{padding:3px 0;color:var(--paper);}
+
+  .preview{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13.5px;
+    line-height:2;
+    white-space:pre-wrap;
+    color:var(--paper);
+  }
+  .preview b{color:var(--hazard);}
+
+  .spinner{
+    display:inline-block;width:14px;height:14px;
+    border:2px solid rgba(0,0,0,.25);border-top-color:var(--ink);
+    border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-left:6px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .toast{
+    position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+    background:var(--hazard);color:var(--ink);font-weight:700;font-size:13px;
+    padding:10px 18px;border-radius:30px;opacity:0;pointer-events:none;
+    transition:opacity .25s;
+  }
+  .toast.show{opacity:1;}
+
+  .err{color:var(--alert);font-size:12.5px;margin-top:8px;}
+  .info-note{font-size:11.5px;color:var(--steel);margin-top:10px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="hazard-band"></div>
+<header>
+  <p class="eyebrow">Safety Officer / موقع مخالفات السلامة</p>
+  <h1>توثيق مخالفة ميدانية</h1>
+  <p class="sub">صوّر، خلّي الذكاء الاصطناعي يقترح المخالفات، عدّل النص، وأرسلها للمشرف مباشرة.</p>
+</header>
+
+<main>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <span class="step-num">01</span>
+    <div class="step-title">موقع المخالفة</div>
+    <div class="row2">
+      <div>
+        <label>رقم المنطقة</label>
+        <input type="text" id="region" placeholder="مثال: 12">
+      </div>
+      <div>
+        <label>رقم الفيلا</label>
+        <input type="text" id="villa" placeholder="مثال: 45">
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <span class="step-num">02</span>
+    <div class="step-title">صورة الموقع</div>
+    <label class="upload-zone" id="uploadZone" for="fileInput">
+      <div id="uploadPlaceholder">
+        <div style="font-size:28px;">📷</div>
+        <div style="font-weight:700;margin-top:4px;">اضغط لرفع صورة</div>
+        <div class="upload-hint">JPG / PNG — سيتم تحليلها تلقائياً</div>
+      </div>
+      <img id="previewImg" style="display:none;">
+    </label>
+    <input type="file" id="fileInput" accept="image/*" capture="environment">
+
+    <button class="btn-primary" id="analyzeBtn" style="margin-top:12px;" disabled>حلّل الصورة بالذكاء الاصطناعي</button>
+    <div class="ai-box" id="aiBox">
+      <div class="ttl">مخالفات محتملة رصدها التحليل — راجعها قبل الاستخدام</div>
+      <div id="aiList"></div>
+    </div>
+    <div class="err" id="errBox" style="display:none;"></div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <span class="step-num">03</span>
+    <div class="step-title">نص المخالفة</div>
+    <label>اكتب أو عدّل وصف المخالفة</label>
+    <textarea id="violationText" placeholder="مثال: عدم استخدام معدات الوقاية الشخصية (خوذة) من قبل العامل..."></textarea>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <span class="step-num">04</span>
+    <div class="step-title">إرسال للمشرف</div>
+    <label>رقم واتساب المشرف (مع رمز الدولة، بدون +)</label>
+    <input type="tel" id="supPhone" placeholder="مثال: 9665XXXXXXXX">
+
+    <label style="margin-top:12px;">معاينة الرسالة</label>
+    <div class="preview" id="msgPreview">—</div>
+
+    <button class="btn-whatsapp" id="sendBtn" style="margin-top:14px;">إرسال عبر واتساب ↗</button>
+    <button class="btn-ghost" id="copyBtn">نسخ النص</button>
+
+    <p class="info-note">
+      ⚠️ منشن (@) داخل جروب واتساب ما ينعمل تلقائياً عبر أي رابط — يتفتح لك محادثة مباشرة مع المشرف بالرسالة جاهزة.
+      إذا تبي ترسلها بجروب وتسوي منشن، اضغط «نسخ النص» والصقها بالجروب وسوّي @ يدوياً.
+    </p>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let imgBase64 = null, imgMediaType = null;
+
+// ---- persisted supervisor number ----
+(async () => {
+  try{
+    const r = await window.storage.get('sup_phone');
+    if(r && r.value) $('supPhone').value = r.value;
+  }catch(e){}
+})();
+$('supPhone').addEventListener('change', async () => {
+  try{ await window.storage.set('sup_phone', $('supPhone').value); }catch(e){}
+});
+
+// ---- upload / preview ----
+$('uploadZone').addEventListener('click', e => { if(e.target.tagName!=='INPUT') $('fileInput').click(); });
+$('fileInput').addEventListener('change', () => {
+  const file = $('fileInput').files[0];
+  if(!file) return;
+  imgMediaType = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataUrl = reader.result;
+    imgBase64 = dataUrl.split(',')[1];
+    $('previewImg').src = dataUrl;
+    $('previewImg').style.display = 'block';
+    $('uploadPlaceholder').style.display = 'none';
+    $('uploadZone').classList.add('has-img');
+    $('analyzeBtn').disabled = false;
+    $('aiBox').classList.remove('show');
+    $('errBox').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
+// ---- analyze with Claude vision ----
+$('analyzeBtn').addEventListener('click', async () => {
+  if(!imgBase64) return;
+  const btn = $('analyzeBtn');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = 'جاري التحليل <span class="spinner"></span>';
+  $('errBox').style.display = 'none';
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: imgMediaType, data: imgBase64 } },
+            { type: "text", text: "أنت مهندس سلامة وصحة مهنية (HSE) يفحص صورة من موقع بناء/فيلا سكنية. اذكر فقط المخالفات المحتملة الظاهرة في الصورة بشكل مختصر وواضح باللغة العربية، كل مخالفة في سطر مستقل يبدأ بـ '- '. لا تكتب مقدمة ولا خاتمة، فقط قائمة المخالفات. إذا لم تظهر أي مخالفة واضحة، اكتب سطر واحد: '- لم تُرصد مخالفات واضحة في الصورة، يرجى المراجعة الميدانية.'" }
+          ]
+        }]
+      })
+    });
+    const data = await response.json();
+    const text = (data.content || []).map(b => b.text || '').join('\n').trim();
+    const lines = text.split('\n').map(l => l.replace(/^-+\s*/,'').trim()).filter(Boolean);
+
+    $('aiList').innerHTML = lines.map(l => `<div class="ai-item">• ${escapeHtml(l)}</div>`).join('');
+    $('aiBox').classList.add('show');
+
+    // prefill/append into the editable textarea
+    const ta = $('violationText');
+    const suggestion = lines.join('\n');
+    ta.value = ta.value.trim() ? ta.value.trim() + '\n' + suggestion : suggestion;
+    updatePreview();
+  }catch(e){
+    $('errBox').textContent = 'تعذّر تحليل الصورة. تحقق من الاتصال وحاول مرة أخرى.';
+    $('errBox').style.display = 'block';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+});
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ---- live preview of final message ----
+function buildMessage(){
+  const region = $('region').value.trim() || '—';
+  const villa = $('villa').value.trim() || '—';
+  const violation = $('violationText').value.trim() || '—';
+  return `المنطقة: ${region}\nالفيلا: ${villa}\n${violation}\nfiy`;
+}
+function updatePreview(){
+  $('msgPreview').textContent = buildMessage();
+}
+['region','villa','violationText'].forEach(id => $(id).addEventListener('input', updatePreview));
+updatePreview();
+
+// ---- send via WhatsApp ----
+$('sendBtn').addEventListener('click', () => {
+  const phone = $('supPhone').value.replace(/[^0-9]/g,'');
+  if(!phone){
+    showToast('أدخل رقم المشرف أولاً');
+    return;
+  }
+  const msg = encodeURIComponent(buildMessage());
+  window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+});
+
+// ---- copy ----
+$('copyBtn').addEventListener('click', async () => {
+  try{
+    await navigator.clipboard.writeText(buildMessage());
+    showToast('تم نسخ النص');
+  }catch(e){
+    showToast('تعذّر النسخ');
+  }
+});
+
+function showToast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
+</script>
+
+</body>
+</html>
